@@ -43,14 +43,15 @@ class SuperPrototyping < Formula
       exec "#{formula_opt_bin("node")}/node" "$plugin/canvas/dist/server.mjs" --port "${SP_CANVAS_PORT:-5173}" --open
     SH
     chmod 0755, bin/"super-prototyping"
+    bin.install_symlink bin/"super-prototyping" => "sp"
   end
 
   def caveats
     <<~EOS
       Start the canvas from a project directory:
-        cd my-project && super-prototyping
+        cd my-project && sp
       It serves ./mockups/canvases at http://127.0.0.1:5173 and opens the browser.
-      Ctrl-C stops it.
+      Ctrl-C stops it. super-prototyping is the same command.
     EOS
   end
 
@@ -59,5 +60,6 @@ class SuperPrototyping < Formula
     assert_path_exists libexec/"plugin/mockups/canvases/templates/gen.py"
     assert_match "prototyping-canvas", (libexec/"plugin/canvas/package.json").read
     assert_predicate bin/"super-prototyping", :executable?
+    assert_predicate bin/"sp", :executable?
   end
 end
