@@ -21,45 +21,41 @@ class SuperPrototyping < Formula
 
   def install
     # The plugin tree the skills and the canvas's chat panel address: the skills, the
-    # manifests, the board template the skills copy to start a board, and the canvas app.
-    # Not the worked example boards, which are 150MB and on the hosted canvas.
+    # manifests, the board template the skills copy to start a board, the canvas app, and
+    # `sp`. Not the worked example boards, which are 150MB and on the hosted canvas.
     plugin = libexec/"plugin"
     plugin.install "skills", ".claude-plugin", ".codex-plugin", ".codebuddy-plugin", "plugin.json"
     (plugin/"mockups/canvases").install "mockups/canvases/templates"
     (plugin/"canvas").install "canvas/package.json"
+    (plugin/"tools").install "tools/sp_canvas.py"
     resource("canvas").stage { (plugin/"canvas/dist").install Dir["*"] }
 
-    # The launcher: the canvas against ./mockups/canvases, in the foreground, with the
-    # browser opened. `sp-canvas start` is the detached form, from the Python toolkit the
-    # agent installs when a skill calls for it; this needs nothing but node.
-    (bin/"super-prototyping").write <<~SH
+    # `sp` is the toolkit's launcher, run from this tree on the python3 the Command Line
+    # Tools ship: it is standard library only. The rest of the toolkit (refkit, artgen)
+    # the agent installs with uv when a skill calls for it, and the `sp` that brings is
+    # this same file, so the two never disagree on what `sp stop` does.
+    (bin/"sp").write <<~SH
       #!/bin/bash
-      set -eu
-      plugin="#{opt_libexec}/plugin"
-      export SUPER_PROTOTYPING_ROOT="$plugin"
-      export PROTOTYPING_PROJECT_DIR="$PWD"
-      export PROTOTYPING_CANVASES_DIR="$PWD/mockups/canvases"
-      mkdir -p "$PROTOTYPING_CANVASES_DIR"
-      exec "#{formula_opt_bin("node")}/node" "$plugin/canvas/dist/server.mjs" --port "${SP_CANVAS_PORT:-5173}" --open
+      export SUPER_PROTOTYPING_ROOT="#{opt_libexec}/plugin"
+      export PATH="#{formula_opt_bin("node")}:$PATH"
+      exec python3 "$SUPER_PROTOTYPING_ROOT/tools/sp_canvas.py" "$@"
     SH
-    chmod 0755, bin/"super-prototyping"
-    bin.install_symlink bin/"super-prototyping" => "sp"
+    chmod 0755, bin/"sp"
   end
 
   def caveats
     <<~EOS
       Start the canvas from a project directory:
-        cd my-project && sp
+        cd my-project && sp start
       It serves ./mockups/canvases at http://127.0.0.1:5173 and opens the browser.
-      Ctrl-C stops it. super-prototyping is the same command.
+      sp stop stops it.
     EOS
   end
 
   test do
     assert_path_exists libexec/"plugin/canvas/dist/server.mjs"
     assert_path_exists libexec/"plugin/mockups/canvases/templates/gen.py"
-    assert_match "prototyping-canvas", (libexec/"plugin/canvas/package.json").read
-    assert_predicate bin/"super-prototyping", :executable?
-    assert_predicate bin/"sp", :executable?
+    assert_equal (libexec/"plugin").realpath,
+                 Pathname(shell_output("#{bin}/sp root").strip).realpath
   end
 end
