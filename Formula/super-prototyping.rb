@@ -45,10 +45,10 @@ class SuperPrototyping < Formula
 
   def caveats
     <<~EOS
-      Start the canvas from a project directory:
-        cd my-project && sp start
-      It serves ./mockups/canvases at http://127.0.0.1:5173 and opens the browser.
-      sp stop stops it.
+      Start the canvas for a project, from anywhere:
+        sp start ~/my-project
+      It serves that directory's mockups/canvases at http://127.0.0.1:5173 and
+      opens the browser. With no directory it is the current one. sp stop stops it.
     EOS
   end
 
