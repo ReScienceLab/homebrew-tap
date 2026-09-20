@@ -1,5 +1,5 @@
 # ReScience Lab Homebrew tap
 
-    brew install ReScienceLab/tap/super-prototyping
+    brew install --cask ReScienceLab/tap/super-prototyping
 
-One formula per tool, bumped by each project's release workflow.
+One cask per app, written by each project's release workflow.
