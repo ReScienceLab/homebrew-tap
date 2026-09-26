@@ -1,9 +1,9 @@
 cask "super-prototyping" do
   arch arm: "arm64", intel: "x64"
 
-  version "1.6.3"
-  sha256 arm:   "a78bbe95e19484d21944f02de8c9eb9cc0f6a122293efbe400e9c89cd65a0b82",
-         intel: "f869f93ae5f60ce1853948125a996948afb005ff706ff86f54088bfd8e62c826"
+  version "1.6.4"
+  sha256 arm:   "11288295b68904437e4d255f3aa3846be5a46579dceb18b09c2053b27d8c1d31",
+         intel: "103f9a51bc60fe27071c19a562db4948ee0f1512a7b5a9af5055445fb1a4cdea"
 
   url "https://github.com/ReScienceLab/super-prototyping/releases/download/super-prototyping--v#{version}/Super-Prototyping-#{version}-#{arch}.dmg"
   name "Super Prototyping"
